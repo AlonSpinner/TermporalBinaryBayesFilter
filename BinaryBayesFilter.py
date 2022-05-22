@@ -11,9 +11,9 @@ def logodds2p(l):
 p_xocc_zocc = 0.7
 p_xfree_zocc = 0.3
 p_xocc_zfree = 0.4
-p_xfree_zfree=0.6
+p_xfree_zfree = 0.6
 
-p0 = 0.3
+p0 = 0.5
 l0 = p2logodds(p0)
 
 l = l0
