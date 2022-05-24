@@ -1,7 +1,8 @@
 from .GridFastSlam import GridFastSlam
 import numpy as np
 
-schedule = np.array([0,4,2,5,10])
+schedule = np.array([[1,2],[3,4],[5,6],[7,8],[9,10]])
+world = np.array([1,2,3,4,5])
 grid = GridFastSlam(5,schedule)
 
 t = 3
@@ -17,6 +18,6 @@ for i in range(actions):
     grid.moveParticles(actions[i])
     grid.reWeight(measurements[i])
     grid.updateMaps(measurements[i],t)
+    #<resample>
 
     t +=1
-    #skip resample

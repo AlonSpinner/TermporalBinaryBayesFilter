@@ -38,11 +38,13 @@ class GridFastSlam:
         pass
 
     def forwardSensorModel(self,z,x,pm):
+        #return probability of achieving measurement z given probablistic estimate on cell's occpunacy
         scheduleModel(x,t)
         if z == "⬜"
         pass
     
     def inverseSensorModel(self,z,x,t):
+        #returns probablity of m being occupied
         gama = self.schedule[x]
         if z == "⬜":
             return logisticCurve(t,gama)
@@ -50,6 +52,7 @@ class GridFastSlam:
             return 1 - logisticCurve(t,gama)
     
     def scheduleModel(self,x,t):
+        #returns proability of m being occupied given schedule and time
         gama = self.schedule[x]
         return 0.8*logisticCurve(t,gama)
 

@@ -24,9 +24,8 @@ p_xfree_zocc = lambda x: 1 - p_xocc_zocc(x)
 p_xfree_zfree = lambda x: 0.7 * logisticCurve(x,0.5,gama)
 p_xocc_zfree = lambda x: 1 - p_xfree_zfree(x)
 
-p0 = 0.5
-p0 = lambda x: logisticCurve(x,0.5,gama)
-l0 = p2logodds(p0)
+p0 = lambda x: 0.7 * logisticCurve(x,0.5,gama)
+l0 = p2logodds(p0(0))
 
 l = l0
 z = ['occ','occ','occ','occ','occ']
