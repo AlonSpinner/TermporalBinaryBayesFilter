@@ -45,7 +45,3 @@ def scheduleModel(S, x, t, m = "⬛"):
             return logisticCurve(t,gama,sigma)  
     else:
         raise Exception("m is not ⬜ or ⬛")
-
-def logisticCurve(t, gama, sigma):
-    y = 1/(1 + np.exp(-sigma*(t-gama)))
-    return y
