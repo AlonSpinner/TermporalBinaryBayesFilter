@@ -5,7 +5,7 @@ from TBBF.gaussians import gaussian1D
 
 g = gaussian1D(3,1)
 
-dt = 0.5
+dt = 0.1
 t = np.array(np.arange(0,10,dt))
 dydt = g.pdf(t)
 y = g.cdf(t)

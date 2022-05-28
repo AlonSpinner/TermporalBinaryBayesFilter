@@ -11,7 +11,7 @@ class gaussian1D:
         
 
     def sample(self, n = 1):
-        return np.random.normal(self.mu, self.sigma, n = 1000)
+        return np.random.normal(self.mu, self.sigma, n)
 
     def cdf(self,x): #cumulative distibution function
         # https://en.wikipedia.org/wiki/Normal_distribution
