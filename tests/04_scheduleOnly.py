@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from TBBF.gaussians import gaussian1D as g1d
-
+from TBBF.plotting import show_gtScheduleMeasurement
 n = 5
 
 np.random.seed(1)
@@ -24,5 +24,5 @@ x = 2
 for a in actions:
     #move robot
     #sample schedule
-    #
+    show_gtScheduleMeasurement(building,x,)
 

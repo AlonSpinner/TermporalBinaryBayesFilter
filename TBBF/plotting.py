@@ -9,7 +9,7 @@ def show_gtScheduleMeasurement(building,robot,schedule,measurement,time):
     rshow = np.array([robot,0])
     mshow = np.array([robot,0.2]) #measurement
     im = np.concatenate((ashow,sshow),axis = 0)
-    if "⬛":
+    if measurement == "⬛":
         color = 'k'
     else:
         color = 'w'
