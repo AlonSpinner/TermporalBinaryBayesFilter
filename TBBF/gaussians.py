@@ -20,7 +20,9 @@ class gaussian1D:
         return 0.5*(1+nperf((x-self.mu)/(self.sigma*np.sqrt(2))))
 
 def nperf(x):
-    #erf on arrays
-    return np.array([erf(val) for val in x])
+    if np.isscalar(x):
+        return erf(x)
+    else:
+        return np.array([erf(val) for val in x])
 
     

@@ -11,18 +11,22 @@ schedule = [g1d(3,0.5),
             g1d(5,0.5),
             g1d(6,1),
             g1d(7,0.2)]
-world = np.array([g.sample() for g in schedule])
+actual = np.array([g.sample() for g in schedule])
 
 t = 4.0
 
 dt = 0.1
-t = np.array(np.arange(0,10,dt))
 
-actions = [1,1,0,1,-1,-1,-1]
+actions = [1,1,0,-1,-1,0,-1]
 x = 2
 
 for a in actions:
     #move robot
     #sample schedule
-    show_gtScheduleMeasurement(building,x,)
+    x += a
+    s = np.array([g.cdf(t) for g in schedule])
+    building = np.array([int(t > ac) for ac in actual])
+    show_gtScheduleMeasurement(building,x,s,"⬛",t)
+    plt.pause(1)
+    t += 1
 
