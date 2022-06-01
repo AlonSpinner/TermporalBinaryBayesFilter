@@ -1,14 +1,7 @@
+from .gaussians import gaussian1D as g1d
 import numpy as np
 
-def forwardSensorModel(self,z,x,pm):
-    #return probability of achieving measurement z given probablistic estimate on cell's occpunacy
-        # if z == "⬜":
-        #     return logisticCurve(t,gama,sigma)
-        # elif z == "⬛":
-        #     return 1 - logisticCurve(t,gama)
-    pass
-
-def inverseSensorModel(z, S, x, t, m = "⬛"):
+def inverseSensorModel(z : str, S : g1d, x : int, t : float, m = "⬛"):
     '''
     z - meaurement "⬜" or "⬛"
     S - schedule of building
@@ -17,31 +10,30 @@ def inverseSensorModel(z, S, x, t, m = "⬛"):
     
     returns probablity of m
     '''
-    gama, sigma = S[x]
+    num = forwardModel(z, m) * scheduleModel(S, x, t , m)
+    denum = forwardModel(z, m = "⬜") * scheduleModel(S, x, t , m = "⬜") + \
+                forwardModel(z, m = "⬛") * scheduleModel(S, x, t , m = "⬛")
+    return num/denum
 
+def forwardModel(z : str, m : str):
     if m == "⬛":
         if z == "⬜":
-            return logisticCurve(t,gama,sigma)
+            return 0.1
         elif z == "⬛":
-            return 1 - logisticCurve(t,gama)
+            return 0.9
 
     elif m == "⬜":
         if z == "⬜":
-            return logisticCurve(t,gama,sigma)
+            return 0.7
         elif z == "⬛":
-            return 1 - logisticCurve(t,gama)
+            return 0.3
     
-    else:
-        raise Exception("m is not ⬜ or ⬛")
-
-    
-def scheduleModel(S, x, t, m = "⬛"):
+def scheduleModel(S : list[g1d], x : int, t : float , m : str = "⬛"):
     #returns proability of m being occupied given schedule and time
-    gama, sigma = S[x]
+    s = S[x]
     if m == "⬛":
-            return logisticCurve(t,gama,sigma)
-
+            return s.cdf(t)
     elif m == "⬜":
-            return logisticCurve(t,gama,sigma)  
+            return 1 - s.cdf(t)
     else:
         raise Exception("m is not ⬜ or ⬛")
