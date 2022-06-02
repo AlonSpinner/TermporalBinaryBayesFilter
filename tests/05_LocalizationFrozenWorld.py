@@ -35,24 +35,27 @@ x = 2 #robot location
 pltr.update(t0, estRobot = estRobot, world = frozenWorld, robot = x, schedule = frozenSchedule)
 pltr.show()
 t = t0
-for a in actions:
-    #move robot
-    x += a
+with plt.ion():
+    for a in actions:
+        #move robot
+        x += a
 
-    #sample measurement
-    z = sampleMeasurement(bool2str(frozenWorld[x]))
-    meas = np.random.rand(n)
+        #sample measurement
+        z = sampleMeasurement(bool2str(frozenWorld[x]))
+        meas = np.random.rand(n)
 
-    #update estRobot
-    for c in range(n):
-        if 0 <= (c + a) < n: #inside map
-            estRobot[c + a] = estRobot[c] * forwardSensorScheduleModel(z,schedule[c+a],t0)
-            estRobot = estRobot/sum(estRobot)
+        #update estRobot
+        estRobotNew = np.zeros(n)
+        for c in range(n):
+            cNew = c + a
+            if 0 <= cNew < n: #inside world
+                estRobotNew[cNew] = estRobot[c] * forwardSensorScheduleModel(z,schedule[cNew],t0)
+        estRobot = estRobotNew/sum(estRobotNew)
 
-    #plot
-    t += 1
-    pltr.update(t, z = z, estRobot = estRobot, world = frozenWorld, robot = x, schedule = frozenSchedule)
-    pltr.show()
-    plt.pause(0.5)
+        #plot
+        t += 1
+        pltr.update(t, z = z, estRobot = estRobot, world = frozenWorld, robot = x, schedule = frozenSchedule)
+        pltr.show()
+        plt.pause(0.5)
 
 plt.show()

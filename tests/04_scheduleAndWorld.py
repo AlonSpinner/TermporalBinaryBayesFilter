@@ -33,7 +33,7 @@ pltr.show()
 for a,z in zip(actions,measurements):
     x += a
     t += 1
-    pltr.update(t, world = get_world(t), robot = x, schedule = get_schedule(t))
+    pltr.update(t, z,  world = get_world(t), robot = x, schedule = get_schedule(t))
     pltr.show()
     plt.pause(0.5)
 

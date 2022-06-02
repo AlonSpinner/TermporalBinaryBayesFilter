@@ -1,5 +1,7 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from math import erf
+
 
 class gaussian1D:
     def __init__(self,mu,sigma):
@@ -18,6 +20,21 @@ class gaussian1D:
         #returns integral from [-inf,x]
 
         return 0.5*(1+nperf((x-self.mu)/(self.sigma*np.sqrt(2))))
+
+    def plot(self):
+        dt = 0.1
+        tmin = self.mu - 3 * self.sigma
+        tmax = self.mu + 3 * self.sigma
+        t = np.array(np.arange(tmin,tmax,dt))
+        dydt = self.pdf(t)
+        y = self.cdf(t)
+
+        fig, axes = plt.subplots(1,2)
+        axes[0].plot(t,y)
+        axes[0].set_title('y(t)')
+        axes[1].plot(t,dydt)
+        axes[1].set_title('dydt(t)')
+        plt.show()
 
 def nperf(x):
     if np.isscalar(x):
