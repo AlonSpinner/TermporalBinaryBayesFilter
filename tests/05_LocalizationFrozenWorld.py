@@ -49,7 +49,7 @@ with plt.ion():
         for c in range(n):
             cNew = c + a
             if 0 <= cNew < n: #inside world
-                estRobotNew[cNew] = estRobot[c] * forwardSensorScheduleModel(z,schedule[cNew],t0)
+                estRobotNew[cNew] = estRobot[c] * forwardSensorScheduleModel(z,schedule[cNew],t0) #deterministic actions. grid localization
         estRobot = estRobotNew/sum(estRobotNew)
 
         #plot
