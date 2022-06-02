@@ -5,20 +5,6 @@ from enum import IntEnum
 fc = lambda v,c: np.stack((np.expand_dims(v, axis = 0),)*3,axis=-1) * c
 f = lambda v: np.stack((np.expand_dims(v, axis = 0))*3,axis=-1)
 
-def show_gtScheduleMeasurement(actual : np.ndarray, robot : float, schedule : np.ndarray, measurement : str ,time : float):
-    ashow = f(actual,np.array([1,0,0]))
-    sshow = f(schedule,np.array([0.7,0.5,0]))
-    rshow = np.array([robot,0])
-    im = np.concatenate((ashow,sshow),axis = 0)
-    if measurement == "⬛":
-        z = "occ"
-    else:
-        z = "free"
-    plt.imshow(im)
-    plt.scatter(rshow[0],rshow[1], s = 50 ,color = 'g') #actual location of robot
-    plt.title(f"t = {time}      z = {z}")
-
-
 class axE(IntEnum):
     Meas= 0
     EstMap = 1
@@ -83,13 +69,13 @@ class plotter:
             else: # z == "⬜"
                 self.meas[row,self.n//2] = 0.8
         if estMap is not None:
-            self.estMap[row,:] = estMap
+            self.estMap[row,:] = 1 - estMap #black is high probability ~ 0 in image
         if estRobot is not None:
-            self.estRobot[row,:] = estRobot
+            self.estRobot[row,:] = 1 - estRobot
         if world is not None:
-            self.world[row,:] = world
+            self.world[row,:] = 1 - world
         if schedule is not None:
-            self.schedule[row,:] = schedule
+            self.schedule[row,:] = 1 - schedule
         if robot is not None:
             self.robot[dt] = robot
     
