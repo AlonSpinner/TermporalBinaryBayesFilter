@@ -67,7 +67,7 @@ class plotter:
             if z == "⬛":
                 self.meas[row,self.n//2] = 0
             else: # z == "⬜"
-                self.meas[row,self.n//2] = 0.8
+                self.meas[row,self.n//2] = 1.0
         if estMap is not None:
             self.estMap[row,:] = 1 - estMap #black is high probability ~ 0 in image
         if estRobot is not None:
@@ -88,6 +88,15 @@ class plotter:
 
         if self.robot[self.dt] >= 0:
             self.axes[0,axE.World].scatter(self.robot[self.dt],self.row, s = 10 ,color = 'r') #actual location of robot
+
+        if self.meas[self.row,self.n//2] > 0.5:
+            highlight_cell(self.axes[0,axE.Meas], self.row, self.n//2, color="black", linewidth=1)
+
+def highlight_cell(ax, row ,col, **kwargs):
+    #https://stackoverflow.com/questions/56654952/how-to-mark-cells-in-matplotlib-pyplot-imshow-drawing-cell-borders
+    rect = plt.Rectangle((col-.5, row-.5), 1,1, fill=False, **kwargs)
+    ax.add_patch(rect)
+    return rect
 
 if __name__ == "__main__":
     p = plotter()

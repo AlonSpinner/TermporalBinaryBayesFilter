@@ -45,8 +45,8 @@ for a in actions:
 
     #update estRobot
     for c in range(n):
-        if 0 <= c + a < n: #inside map
-            estRobot[c + a] = estRobot[c] * forwardSensorScheduleModel(z,schedule[c],t)
+        if 0 <= (c + a) < n: #inside map
+            estRobot[c + a] = estRobot[c] * forwardSensorScheduleModel(z,schedule[c+a],t0)
             estRobot = estRobot/sum(estRobot)
 
     #plot
