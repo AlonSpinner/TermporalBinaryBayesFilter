@@ -29,7 +29,7 @@ class axE(IntEnum):
 class plotter:
 
     def __init__(self, t0 = 0, tf : int =10, n : int = 5) -> None:
-        fig, axes = plt.subplots(1,5, sharey = False, sharex = True ,squeeze = False,)
+        fig, axes = plt.subplots(1,5, sharey = False, sharex = False ,squeeze = False,)
         for row in axes:
             for ax in row:
                 ax.set_xticks([])
@@ -50,10 +50,12 @@ class plotter:
         labels = [f"t = {l+t0}      " for l in range(L)]
         axes[0,axE.Meas].set_yticks(ticks,labels)
 
-        self.axes = axes
-        self.fig = fig
-        self.n = n
-        self.t = t0
+        self.axes : list[list[plt.Axes]]= axes
+        self.fig : plt.Figure = fig
+        self.n : int = n
+        self.t0 : int = t0
+        self.dt : int = 0
+        self.row : int = 0
 
         #data
         self.meas = np.ones((L*2, n))
@@ -66,34 +68,40 @@ class plotter:
     def update(self, t : int ,z : str = None, 
                     estMap : np.ndarray = None, estRobot : np.ndarray = None, 
                     world : np.ndarray = None, robot : np.ndarray = None, 
-                    schedule : np.ndarray = None):
+                    schedule : np.ndarray = None) -> None:
         
-        self.t = t
+        dt = t -self.t0
+        row = (dt)*2
+
+        #store for show
+        self.dt = dt 
+        self.row = row 
         
-        if z:
-            self.meas[t,self.n//2] = 1.0
-        else:
-            self.meas[t,self.n//2] = 0.5
-        if estMap:
-            self.estMap[t,:] = estMap
-        if estRobot:
-            self.estRobot[t,:] = estRobot
-        if world:
-            self.world[t,:] = world
-        if schedule:
-            self.schedule[t,:] = schedule
-        if robot:
-            self.robot[t] = robot
+        if z is not None:
+            if z == "⬛":
+                self.meas[row,self.n//2] = 0
+            else: # z == "⬜"
+                self.meas[row,self.n//2] = 0.8
+        if estMap is not None:
+            self.estMap[row,:] = estMap
+        if estRobot is not None:
+            self.estRobot[row,:] = estRobot
+        if world is not None:
+            self.world[row,:] = world
+        if schedule is not None:
+            self.schedule[row,:] = schedule
+        if robot is not None:
+            self.robot[dt] = robot
     
-    def show(self):
+    def show(self) -> None:
         self.axes[0,axE.Meas].imshow(self.meas, cmap ="gray", vmin = 0, vmax = 1)
         self.axes[0,axE.EstMap].imshow(self.estMap, cmap ="gray", vmin = 0, vmax = 1)
         self.axes[0,axE.EstRobot].imshow(self.estRobot, cmap ="gray", vmin = 0, vmax = 1)
         self.axes[0,axE.World].imshow(self.world, cmap ="gray", vmin = 0, vmax = 1)
         self.axes[0,axE.Schedule].imshow(self.schedule, cmap ="gray", vmin = 0, vmax = 1)
 
-        if self.robot[self.t] > 0:
-            self.axes[0,axE.World].scatter(self.robot[self.t],self.t * 2, s = 50 ,color = 'r') #actual location of robot
+        if self.robot[self.dt] >= 0:
+            self.axes[0,axE.World].scatter(self.robot[self.dt],self.row, s = 10 ,color = 'r') #actual location of robot
 
 if __name__ == "__main__":
     p = plotter()
