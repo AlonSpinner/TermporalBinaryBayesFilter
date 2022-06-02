@@ -23,7 +23,7 @@ class plotter:
                 ax.spines['top'].set_visible(False)
                 # ax.spines['right'].set_visible(False)
                 ax.spines['bottom'].set_visible(False)
-                ax.spines['left'].set_visible(False)
+                # ax.spines['left'].set_visible(False)
 
         axes[0,axE.Meas].set_title('Measurement')
         axes[0,axE.EstMap].set_title('Est. Map')

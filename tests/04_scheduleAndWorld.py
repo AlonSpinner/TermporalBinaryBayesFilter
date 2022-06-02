@@ -13,26 +13,24 @@ schedule = [g1d(3,0.5),
 history = np.array([g.sample() for g in schedule]) #when things were built
 
 get_world = lambda t: np.array([int(t > h) for h in history])
+
 get_schedule = lambda t: np.array([g.cdf(t) for g in schedule])
 
-n = len(schedule)
+n = len(schedule) #number of cells
 L = 7 #number of actions
 t0 = 4
 tf = t0 + L
 pltr = plotter(t0 = t0, tf = tf, n  = n)
 
-t = 4
+t = t0
 actions = [1,1,0,-1,-1,0,-1]
 measurements = ["⬛","⬜","⬛","⬜","⬜","⬛","⬜"]
 x = 2
 
-# plotter.update(t = t, robot = x)
 pltr.update(t, world = get_world(t), robot = x, schedule = get_schedule(t))
 pltr.show()
 
 for a,z in zip(actions,measurements):
-    #move robot
-    #sample schedule
     x += a
     t += 1
     pltr.update(t, world = get_world(t), robot = x, schedule = get_schedule(t))
