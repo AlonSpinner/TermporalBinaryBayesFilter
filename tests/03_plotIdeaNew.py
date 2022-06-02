@@ -29,7 +29,8 @@ axes[0,2].set_title('EstimationRobot')
 axes[0,3].set_title('World')
 axes[0,4].set_title('Schedule')
 
-axes[0,0].set_ylabel('5', rotation=0,labelpad = 30)
+# axes[0,0].set_ylabel('5', rotation=0,labelpad = 30)
+axes[0,0].set_yticks(ticks = [0], labels = [' t = 5    '])
 
 meas = np.array([1 if z == "⬜" else 0])
 axes[0,0].imshow(f(meas))
