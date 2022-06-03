@@ -4,7 +4,7 @@ from TBBF.models import sampleMeasurement, forwardSensorScheduleModel
 from TBBF.gaussians import gaussian1D as g1d
 from TBBF.plotting import plotter
 
-np.random.seed(2)
+np.random.seed(2) #seed 4 and seed 2 are interesting
 
 schedule = [g1d(3,0.5),
             g1d(4,1),
@@ -22,7 +22,7 @@ bool2str = lambda c: "⬛" if c else "⬜"
 t0 = 4
 frozenWorld = get_world(t0)
 frozenSchedule = get_schedule(t0)
-actions = [1,1,0,-1,-1,0,-1,1,1,1,1]
+actions = [-1,-1,0,+1,+1,0,+1,-1,-1,-1,+1]
 L = len(actions) #number of actions
 tf = t0 + L
 n = len(schedule) #number of cells
