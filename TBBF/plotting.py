@@ -1,9 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, rgb_to_hsv
 from enum import IntEnum
 
-fc = lambda v,c: np.stack((np.expand_dims(v, axis = 0),)*3,axis=-1) * c
-f = lambda v: np.stack((np.expand_dims(v, axis = 0))*3,axis=-1)
+def colorise(gray, hue):
+    #to help pick hue
+    #https://subscription.packtpub.com/book/data/9781789537147/1/ch01lvl1sec09/object-detection-using-color-in-hsv
+    rgb = np.stack((gray,gray,gray),axis = 2)
+    hsv = rgb_to_hsv(rgb)
+    hsv[:,:,0] = hue
+    hsv[:,:,1] = 1 - hsv[:,:,2]
+    hsv[:,:,2] = 1
+    return hsv_to_rgb(hsv)
 
 class axE(IntEnum):
     Meas= 0
@@ -43,13 +51,13 @@ class plotter:
         self.dt : int = 0
         self.row : int = 0
 
-        #data
-        self.meas = np.ones((L*2, n))
-        self.estMap = np.ones((L*2, n))
-        self.estRobot = np.ones((L*2, n))
-        self.world = np.ones((L*2, n))
-        self.schedule = np.ones((L*2, n))
-        self.robot = -np.ones(L) #-1 where location is not decided
+        #data: -1 == not measured
+        self.meas = -np.ones((L*2, n)) 
+        self.estMap = -np.ones((L*2, n))
+        self.estRobot = -np.ones((L*2, n))
+        self.world = -np.ones((L*2, n))
+        self.schedule = -np.ones((L*2, n))
+        self.robot = -np.ones(L) #-1 where location should not be drawn
 
     def update(self, t : int ,z : str = None, 
                     estMap : np.ndarray = None, estRobot : np.ndarray = None, 
@@ -65,32 +73,32 @@ class plotter:
         
         if z is not None:
             if z == "⬛":
-                self.meas[row,self.n//2] = 0
+                self.meas[row,self.n//2] = 1 #occupied
             else: # z == "⬜"
-                self.meas[row,self.n//2] = 1.0
+                self.meas[row,self.n//2] = 0 #free
         if estMap is not None:
-            self.estMap[row,:] = 1 - estMap #black is high probability ~ 0 in image
+            self.estMap[row,:] = estMap #black is high probability ~ 0 in image
         if estRobot is not None:
-            self.estRobot[row,:] = 1 - estRobot
+            self.estRobot[row,:] = estRobot
         if world is not None:
-            self.world[row,:] = 1 - world
+            self.world[row,:] =  world
         if schedule is not None:
-            self.schedule[row,:] = 1 - schedule
+            self.schedule[row,:] = schedule
         if robot is not None:
             self.robot[dt] = robot
     
     def show(self) -> None:
-        self.axes[0,axE.Meas].imshow(self.meas, cmap ="gray", vmin = 0, vmax = 1)
-        self.axes[0,axE.EstMap].imshow(self.estMap, cmap ="gray", vmin = 0, vmax = 1)
-        self.axes[0,axE.EstRobot].imshow(self.estRobot, cmap ="gray", vmin = 0, vmax = 1)
-        self.axes[0,axE.World].imshow(self.world, cmap ="gray", vmin = 0, vmax = 1)
-        self.axes[0,axE.Schedule].imshow(self.schedule, cmap ="gray", vmin = 0, vmax = 1)
+        self.axes[0,axE.EstMap].imshow(1 - np.maximum(self.estMap,0), cmap ="gray", vmin = 0, vmax = 1)
+        self.axes[0,axE.EstRobot].imshow(colorise(1 - np.maximum(self.estRobot,0), hue = 1.0))
+        self.axes[0,axE.World].imshow(1 - np.maximum(self.world,0), cmap ="gray", vmin = 0, vmax = 1)
+        self.axes[0,axE.Schedule].imshow(1 - np.maximum(self.schedule,0), cmap ="gray", vmin = 0, vmax = 1)
 
-        if self.robot[self.dt] >= 0:
+        if self.robot[self.dt] != -1:
             self.axes[0,axE.World].scatter(self.robot[self.dt],self.row, s = 10 ,color = 'r') #actual location of robot
 
-        if self.meas[self.row,self.n//2] > 0.5:
+        if self.meas[self.row,self.n//2] == 0:
             highlight_cell(self.axes[0,axE.Meas], self.row, self.n//2, color="black", linewidth=1)
+        self.axes[0,axE.Meas].imshow(1 - np.maximum(self.meas,0), cmap ="gray", vmin = 0, vmax = 1)
 
 def highlight_cell(ax, row ,col, **kwargs):
     #https://stackoverflow.com/questions/56654952/how-to-mark-cells-in-matplotlib-pyplot-imshow-drawing-cell-borders
