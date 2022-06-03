@@ -1,13 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TBBF.models import sampleMeasurement, updateMapping
+from TBBF.models import sampleMeasurement, updateMapping, forwardSensorScheduleModel
 from TBBF.gaussians import gaussian1D as g1d
 from TBBF.plotting import plotter
 
 np.random.seed(2)
 
-schedule = [g1d(3,5),
-            g1d(4,100),
+schedule = [g1d(1,1),
+            g1d(4,20),
             g1d(1e10,1), #build far far in the future
             g1d(5,0.5),
             g1d(2,5),
@@ -29,10 +29,11 @@ n = len(schedule) #number of cells
 pltr = plotter(t0 = t0, tf = tf, n  = n)
 
 
+estRobot = np.ones(n)/n
 estMap = np.copy(frozenSchedule)
 x = 2 #robot location
 
-pltr.update(t0, world = frozenWorld, robot = x, schedule = frozenSchedule)
+pltr.update(t0, estRobot = estRobot, estMap = estMap, world = frozenWorld, robot = x, schedule = frozenSchedule)
 pltr.show()
 t = t0
 with plt.ion():
@@ -44,13 +45,21 @@ with plt.ion():
         z = sampleMeasurement(bool2str(frozenWorld[x]))
         meas = np.random.rand(n)
 
-        #update estMap
-        estMap[x] = updateMapping(z, schedule[x], t0, estMap[x])
+        #update estRobot
+        estRobotNew = np.zeros(n)
+        for c in range(n):
+            cNew = c + a
+            if 0 <= cNew < n: #inside world
+                estRobotNew[cNew] = estRobot[c] * forwardSensorScheduleModel(z,schedule[cNew],t0) #deterministic actions. grid localization
+        estRobot = estRobotNew/sum(estRobotNew)
 
+        xhat = np.argmax(estRobot)
+        #update estMap
+        estMap[xhat] = updateMapping(z, schedule[xhat], t0, estMap[xhat])
 
         #plot
         t += 1
-        pltr.update(t, z = z, estMap = estMap, world = frozenWorld, robot = x, schedule = frozenSchedule)
+        pltr.update(t, z = z, estRobot = estRobot, estMap = estMap, world = frozenWorld, robot = x, schedule = frozenSchedule)
         pltr.show()
         plt.pause(0.5)
 
