@@ -96,10 +96,11 @@ def updateMapping(z : str, s : g1d, t : float, pkm1: float, pr :float = 1):
     
     returns updated probablity of cell being occupied
     '''
+    alpha = 0.5 ** (1-pr)
+    ps = alpha *scheduleModel(s, t) ** pr
+    pz = alpha * inverseSensorScheduleModel(z, s, t) ** pr
     
-    ps = scheduleModel(s, t)
-    pz = inverseSensorScheduleModel(z, s, t)
-    odds =  (pz/(1-pz+EPS))**pr * pkm1/(1-pkm1+EPS) * ((1-ps)/(ps+EPS))**pr
+    odds =  (pz/(1-pz+EPS)) * pkm1/(1-pkm1+EPS) * ((1-ps)/(ps+EPS))
     return odds2p(odds)
 
 def p2logodds(p):
