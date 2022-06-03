@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TBBF.models import sampleMeasurement, updateMapping, forwardSensorScheduleModel
+from TBBF.models import sampleMeasurement, updateMapping, forwardSensorScheduleModel, motionModel
 from TBBF.gaussians import gaussian1D as g1d
 from TBBF.plotting import plotter
 
@@ -45,17 +45,18 @@ with plt.ion():
         z = sampleMeasurement(bool2str(frozenWorld[x]))
         meas = np.random.rand(n)
 
-        #update estRobot
+       #update estRobot
         estRobotNew = np.zeros(n)
-        for c in range(n):
-            cNew = c + a
-            if 0 <= cNew < n: #inside world
-                estRobotNew[cNew] = estRobot[c] * forwardSensorScheduleModel(z,schedule[cNew],t0) #deterministic actions. grid localization
+        for ci in range(n):
+                pm = 0
+                for cj in range(n):
+                    pm += motionModel(cj,ci,a) * estRobot[cj]
+                estRobotNew[ci] = forwardSensorScheduleModel(z,schedule[ci],t0) * pm
         estRobot = estRobotNew/sum(estRobotNew)
 
-        xhat = np.argmax(estRobot)
         #update estMap
-        estMap[xhat] = updateMapping(z, schedule[xhat], t0, estMap[xhat])
+        for xhat in range(n):
+            estMap[xhat] = updateMapping(z, schedule[xhat], t0, estMap[xhat], estRobot[xhat]) #estRobot[xhat]
 
         #plot
         t += 1

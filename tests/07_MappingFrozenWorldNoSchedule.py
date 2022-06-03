@@ -6,15 +6,20 @@ from TBBF.plotting import plotter
 
 np.random.seed(2)
 
-schedule = [g1d(1,1),
-            g1d(4,20),
-            g1d(1e10,1), #build far far in the future
-            g1d(5,0.5),
-            g1d(2,5),
-            g1d(1e10,1), #build far far in the future
-            g1d(7,0.2)]
-history = np.array([g.sample() for g in schedule]) #when things were built
-print(history)
+schedule = [g1d(0,1e10),
+            g1d(0,1e10),
+            g1d(0,1e10), #build far far in the future
+            g1d(0,1e10),
+            g1d(0,1e10),
+            g1d(0,1e10), #build far far in the future
+            g1d(0,1e10)]
+history = np.array([[ 5.83242153e-01],
+                    [ 2.87466346e+00],
+                    [ 1.00000000e+10],
+                    [ 5.82013540e+00],
+                    [-6.96717793e+00],
+                    [ 1.00000000e+10],
+                    [ 7.10057628e+00]])
 
 get_world = lambda t: np.array([int(t > h) for h in history])
 get_schedule = lambda t: np.array([g.cdf(t) for g in schedule])

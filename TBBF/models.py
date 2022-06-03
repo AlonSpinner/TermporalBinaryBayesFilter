@@ -2,6 +2,10 @@ from .gaussians import gaussian1D as g1d
 import numpy as np
 EPS = 1e-15
 
+def motionModel(source,dest,a_mu,a_sigma = 0.5):
+    g = g1d(source + a_mu,a_sigma)
+    return  g.pdf(dest)
+    
 def forwardSensorModel(z : str, m : str) -> float:
     '''
     z - meaurement "⬜" or "⬛"
@@ -82,19 +86,20 @@ def inverseSensorScheduleModel(z : str, s : g1d, t : float, m = "⬛") -> float:
     denum = forwardSensorScheduleModel(z, s, t)
     return num/denum
 
-def updateMapping(z : str, s : g1d, t : float, pt: float):
+def updateMapping(z : str, s : g1d, t : float, pkm1: float, pr :float = 1):
     '''
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
     t - world time
-    pt - probability of cell being occupied before measuring
+    pkm1 - probability of cell being occupied before measuring
+    pr - probability of robot being in cell
     
     returns updated probablity of cell being occupied
     '''
     
     ps = scheduleModel(s, t)
     pz = inverseSensorScheduleModel(z, s, t)
-    odds =  pz/(1-pz+EPS) * pt/(1-pt+EPS) * (1-ps)/(ps+EPS)
+    odds =  (pz/(1-pz+EPS))**pr * pkm1/(1-pkm1+EPS) * ((1-ps)/(ps+EPS))**pr
     return odds2p(odds)
 
 def p2logodds(p):
