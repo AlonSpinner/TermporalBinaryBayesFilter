@@ -70,27 +70,38 @@ def forwardSensorScheduleModel(z : str, s : g1d, t):
     return forwardSensorModel(z, m = "⬜") * scheduleModel(s, t , m = "⬜") + \
                 forwardSensorModel(z, m = "⬛") * scheduleModel(s, t , m = "⬛")
 
-# def inverseSensorScheduleModel(z : str, S : g1d, t : float, m = "⬛") -> float:
-#     '''
-#     z - meaurement "⬜" or "⬛"
-#     S - schedule of cell
-#     t - world time
+def inverseSensorScheduleModel(z : str, s : g1d, t : float, m = "⬛") -> float:
+    '''
+    z - meaurement "⬜" or "⬛"
+    s - schedule of cell
+    t - world time
     
-#     returns probablity of m
-#     '''
-#     num = forwardSensorModel(z, m) * scheduleModel(S, t , m)
-#     denum = forwardSensorModel(z, m = "⬜") * scheduleModel(S, t , m = "⬜") + \
-#                 forwardSensorModel(z, m = "⬛") * scheduleModel(S, t , m = "⬛")
-#     return num/denum
+    returns probablity of m
+    '''
+    num = forwardSensorModel(z, m) * scheduleModel(s, t , m)
+    denum = forwardSensorScheduleModel(z, s, t)
+    return num/denum
 
-# def updateMapping(z : str, S : list[g1d], x : int, t : float):
-#     if z:
-#         return p2logodds(inverseSensorScheduleModel(z,S,x,t,m = "⬛")) -p2logodds(scheduleModel(S, x, t, m = "⬛"))
-#     else:
-#         return +p2logodds(scheduleModel(S, x, t, m = "⬛"))
+def updateMapping(z : str, s : g1d, t : float, pt: float):
+    '''
+    z - meaurement "⬜" or "⬛"
+    s - schedule of cell
+    t - world time
+    pt - probability of cell being occupied before measuring
+    
+    returns updated probablity of cell being occupied
+    '''
+    
+    ps = scheduleModel(s, t)
+    pz = inverseSensorScheduleModel(z, s, t)
+    odds =  pz/(1-pz+EPS) * pt/(1-pt+EPS) * (1-ps)/(ps+EPS)
+    return odds2p(odds)
 
-# def p2logodds(p):
-#     return np.log(p / (1 - p + EPS))
+def p2logodds(p):
+    return np.log(p / (1 - p + EPS))
 
-# def logodds2p(l):
-#     return  np.exp(l) / (1 + np.exp(l))
+def logodds2p(l):
+    return  np.exp(l) / (1 + np.exp(l))
+
+def odds2p(odds):
+    return odds / (1 + odds)
