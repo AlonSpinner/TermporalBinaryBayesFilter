@@ -6,13 +6,7 @@ from TBBF.plotting import plotter
 
 np.random.seed(2)
 
-schedule = [g1d(0,1e10),
-            g1d(0,1e10),
-            g1d(0,1e10), #build far far in the future
-            g1d(0,1e10),
-            g1d(0,1e10),
-            g1d(0,1e10), #build far far in the future
-            g1d(0,1e10)]
+schedule = [g1d(4,1e10)] * 7
 history = np.array([[ 5.83242153e-01],
                     [ 2.87466346e+00],
                     [ 1.00000000e+10],
