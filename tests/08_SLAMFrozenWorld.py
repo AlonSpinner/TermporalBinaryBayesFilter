@@ -7,10 +7,10 @@ from TBBF.plotting import plotter
 np.random.seed(2)
 
 schedule = [g1d(1,1),
-            g1d(4,20),
+            g1d(10,20),
             g1d(1e10,1), #build far far in the future
             g1d(5,0.5),
-            g1d(2,5),
+            g1d(10,5),
             g1d(1e10,1), #build far far in the future
             g1d(7,0.2)]
 history = np.array([g.sample() for g in schedule]) #when things were built

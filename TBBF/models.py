@@ -3,7 +3,7 @@ import numpy as np
 from typing import Union,Callable
 EPS = 1e-15
 
-def motionModel(source,dest,a_mu,a_sigma = 0.5):
+def motionModel(source,dest,a_mu,a_sigma = 0.2):
     g = g1d(source + a_mu,a_sigma)
     return  g.pdf(dest)
     
