@@ -97,7 +97,7 @@ def updateCell(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
     
     returns updated probablity of cell being occupied
     '''
-
+    #USES inverseSensorScheduleModel (my choice)
     psg = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t), gama)
     pzg =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorScheduleModel(z, s, t) , gama)
     odds =  (pzg/(1-pzg+EPS)) * pkm1/(1-pkm1+EPS) * ((1-psg)/(psg+EPS))
@@ -113,12 +113,10 @@ def updateCellDynamicWorld(z : str, s : g1d, t : float, pkm1 : float, gama = 1) 
     
     returns updated probablity of cell being occupied
     '''
-
+    #USES forwardSensorScheduleModel (my choice)
     ps = scheduleModel(s, t, "⬛") * pkm1 +  scheduleModel(s, t, "⬛") * (1-pkm1)
-    psg = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t), gama)
-    pzg =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorScheduleModel(z, s, t) , gama)
-
-    odds = (pzg/(1-pzg+EPS)) * ((1-psg)/(psg+EPS)) * ps/(1-ps+EPS)
+    pzg = binaryStateMeasurementModelEnhancer_Explicit(forwardSensorScheduleModel(z,s,t),gama)
+    odds = (pzg/(1-pzg+EPS)) * ps/(1-ps+EPS) #*((1-psg)/(psg+EPS))
     return odds2p(odds)
 
 def binaryStateMeasurementModelEnhancer_Explicit(pz : float, gama : Union[float,np.ndarray])-> Union[float,np.ndarray]:

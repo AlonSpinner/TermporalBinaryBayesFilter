@@ -37,6 +37,8 @@ pltr.show()
 t = t0
 with plt.ion():
     for a in actions:
+        t += 1
+
         #move robot
         x += a
 
@@ -54,7 +56,6 @@ with plt.ion():
         estRobot = estRobotNew/sum(estRobotNew)
 
         #plot
-        t += 1
         pltr.update(t, z = z, estRobot = estRobot, world = frozenWorld, robot = x, schedule = frozenSchedule)
         pltr.show()
         plt.pause(0.5)

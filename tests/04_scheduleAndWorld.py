@@ -22,17 +22,19 @@ t0 = 4
 tf = t0 + L
 pltr = plotter(t0 = t0, tf = tf, n  = n)
 
-t = t0
+
 actions = [1,1,0,-1,-1,0,-1]
 measurements = ["⬛","⬜","⬛","⬜","⬜","⬛","⬜"]
 x = 2
 
-pltr.update(t, world = get_world(t), robot = x, schedule = get_schedule(t))
+pltr.update(t0, world = get_world(t0), robot = x, schedule = get_schedule(t0))
 pltr.show()
-
+t = t0
 for a,z in zip(actions,measurements):
-    x += a
     t += 1
+
+    x += a
+    
     pltr.update(t, z,  world = get_world(t), robot = x, schedule = get_schedule(t))
     pltr.show()
     plt.pause(0.5)

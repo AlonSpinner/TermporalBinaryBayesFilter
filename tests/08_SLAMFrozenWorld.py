@@ -46,6 +46,8 @@ pltr.show()
 t = t0
 with plt.ion():
     for a in actions:
+        t += 1
+
         #move robot
         x += a
 
@@ -67,7 +69,6 @@ with plt.ion():
             estMap[xhat] = updateCell(z, schedule[xhat], t0, estMap[xhat], estRobot[xhat]) #estRobot[xhat]
 
         #plot
-        t += 1
         pltr.update(t, z = z, estRobot = estRobot, estMap = estMap, world = frozenWorld, robot = x, schedule = frozenSchedule)
         pltr.show()
         plt.pause(0.5)
