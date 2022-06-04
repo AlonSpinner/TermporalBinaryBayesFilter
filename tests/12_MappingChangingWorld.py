@@ -6,24 +6,22 @@ from TBBF.plotting import plotter
 
 np.random.seed(2)
 
-np.random.seed(2)
-
 schedule = [g1d(3,0.5),
             g1d(8,2),
             g1d(1e10,1), #build far far in the future
-            g1d(12,10),
+            g1d(12,2),
             g1d(1e10,5),
             g1d(1e10,1), #build far far in the future
             g1d(12,3)]
 history = np.array([g.sample() for g in schedule]) #when things were built
-history[4] = 1.0 #error in schedule
+# history[4] = 1.0 #error in schedule
 
 get_world = lambda t: np.array([int(t > h) for h in history])
 get_schedule = lambda t: np.array([g.cdf(t) for g in schedule])
 bool2str = lambda c: "⬛" if c else "⬜"
 
 t0 = 4
-actions = [-1,-1,0,+1,+1,0,+1,+1,+1,+1,-1,-1]
+actions = [-1,-1,0,+1,+1,0,+1,+1,0,0,0,0,-1,-1,-1,-1,1]
 L = len(actions) #number of actions
 tf = t0 + L
 n = len(schedule) #number of cells
@@ -49,6 +47,8 @@ with plt.ion():
 
         #update estMap
         for c in range(n):
+            if t == 16 and c == 4:
+                test = 0
             estMap[c] = updateCellDynamicWorld(z, schedule[c], t, estMap[c], gama = float(c == x))
 
         #plot

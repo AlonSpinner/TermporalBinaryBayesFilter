@@ -115,7 +115,7 @@ def updateCellDynamicWorld(z : str, s : g1d, t : float, pkm1 : float, gama = 1) 
     '''
     #USES forwardSensorScheduleModel (my choice)
     ps = scheduleModel(s, t, "⬛") * pkm1 +  scheduleModel(s, t, "⬛") * (1-pkm1)
-    pzg = binaryStateMeasurementModelEnhancer_Explicit(forwardSensorScheduleModel(z,s,t),gama)
+    pzg = binaryStateMeasurementModelEnhancer_Explicit(forwardSensorModel(z,"⬛"),gama)
     odds = (pzg/(1-pzg+EPS)) * ps/(1-ps+EPS) #*((1-psg)/(psg+EPS))
     return odds2p(odds)
 
