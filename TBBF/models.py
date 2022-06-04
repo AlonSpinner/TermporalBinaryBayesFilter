@@ -1,5 +1,6 @@
 from .gaussians import gaussian1D as g1d
 import numpy as np
+from typing import Union,Callable
 EPS = 1e-15
 
 def motionModel(source,dest,a_mu,a_sigma = 0.5):
@@ -86,27 +87,48 @@ def inverseSensorScheduleModel(z : str, s : g1d, t : float, m = "⬛") -> float:
     denum = forwardSensorScheduleModel(z, s, t)
     return num/denum
 
-def updateMapping(z : str, s : g1d, t : float, pkm1: float, pr :float = 1):
+def updateMapping(z : str, s : g1d, t : float, pkm1: float, gama = 1):
     '''
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
     t - world time
     pkm1 - probability of cell being occupied before measuring
-    pr - probability of measuring cell ~ probability of being infront of cell
+    gama - probability of measuring cell ~ probability of being infront of cell
     
     returns updated probablity of cell being occupied
     '''
-    alpha = 0.5 ** (1-pr)
-    ps = alpha *scheduleModel(s, t) ** pr
-    pz = alpha * inverseSensorScheduleModel(z, s, t) ** pr
-    
+
+    ps = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t), gama)
+    pz =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorScheduleModel(z, s, t) , gama)
     odds =  (pz/(1-pz+EPS)) * pkm1/(1-pkm1+EPS) * ((1-ps)/(ps+EPS))
     return odds2p(odds)
 
-def p2logodds(p):
+def binaryStateMeasurementModelEnhancer_Explicit(pz : float, gama : Union[float,np.ndarray])-> Union[float,np.ndarray]:
+    '''
+    pz - probability of measurement z occuring given that we measure the thing [0,1]
+    gama - probability of measuring the correct thing [0,1]
+    
+    assumption: z measures a binary state
+    see test 09
+    '''
+    return (0.5**(1-gama) * pz**gama) * (2**(1-gama) / (pz**gama + (1-pz)**gama))
+
+def binaryStateMeasurementModelEnhancer_Implicit(measurementModel : Callable, gama : Union[float,np.ndarray])-> Union[float,np.ndarray]:
+    '''
+    measurementModel - measurement model of a binary state
+    gama - probability of measuring the correct thing [0,1]
+    
+    see test 09
+    '''
+    def enhancedModel(z, m, gama):
+        pz = measurementModel(z, m)
+        return (0.5**(1-gama) * pz**gama) * (2**(1-gama) / (pz**gama + (1-pz)**gama))
+    return enhancedModel
+
+def p2logodds(p) -> Union[float,np.ndarray]:
     return np.log(p / (1 - p + EPS))
 
-def logodds2p(l):
+def logodds2p(l) -> Union[float,np.ndarray]:
     return  np.exp(l) / (1 + np.exp(l))
 
 def odds2p(odds):
