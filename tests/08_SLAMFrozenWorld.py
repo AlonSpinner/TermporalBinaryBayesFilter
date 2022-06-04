@@ -4,7 +4,7 @@ from TBBF.models import sampleMeasurement, updateCell, forwardSensorScheduleMode
 from TBBF.gaussians import gaussian1D as g1d
 from TBBF.plotting import plotter
 
-np.random.seed(2)
+np.random.seed(6)
 
 schedule = [g1d(1,1),
             g1d(10,20),
@@ -14,14 +14,14 @@ schedule = [g1d(1,1),
             g1d(1e10,1), #build far far in the future
             g1d(7,0.2)]
 
-# history = np.array([g.sample() for g in schedule]) #when things were built
-history = np.array([[ 5.83242153e-01],
-                    [ 2.87466346e+00],
-                    [ 1.00000000e+10],
-                    [ 5.82013540e+00],
-                    [-6.96717793e+00],
-                    [ 1.00000000e+10],
-                    [ 7.10057628e+00]])
+history = np.array([g.sample() for g in schedule]) #when things were built
+# history = np.array([[ 5.83242153e-01],
+#                     [ 2.87466346e+00],
+#                     [ 1.00000000e+10],
+#                     [ 5.82013540e+00],
+#                     [-6.96717793e+00],
+#                     [ 1.00000000e+10],
+#                     [ 7.10057628e+00]])
 
 get_world = lambda t: np.array([int(t > h) for h in history])
 get_schedule = lambda t: np.array([g.cdf(t) for g in schedule])
@@ -65,8 +65,8 @@ with plt.ion():
         estRobot = estRobotNew/sum(estRobotNew)
 
         #update estMap
-        for xhat in range(n):
-            estMap[xhat] = updateCell(z, schedule[xhat], t0, estMap[xhat], estRobot[xhat]) #estRobot[xhat]
+        for c in range(n):
+            estMap[c] = updateCell(z, schedule[c], t0, estMap[c], estRobot[c])
 
         #plot
         pltr.update(t, z = z, estRobot = estRobot, estMap = estMap, world = frozenWorld, robot = x, schedule = frozenSchedule)
