@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TBBF.models import sampleMeasurement, updateMapping, forwardSensorScheduleModel, motionModel
+from TBBF.models import sampleMeasurement, updateCell, forwardSensorScheduleModel, motionModel
 from TBBF.gaussians import gaussian1D as g1d
 from TBBF.plotting import plotter
 
@@ -56,7 +56,7 @@ with plt.ion():
 
         #update estMap
         for xhat in range(n):
-            estMap[xhat] = updateMapping(z, schedule[xhat], t0, estMap[xhat], estRobot[xhat]) #estRobot[xhat]
+            estMap[xhat] = updateCell(z, schedule[xhat], t0, estMap[xhat], estRobot[xhat]) #estRobot[xhat]
 
         #plot
         t += 1

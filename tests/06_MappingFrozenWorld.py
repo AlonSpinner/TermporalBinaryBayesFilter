@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TBBF.models import sampleMeasurement, updateMapping
+from TBBF.models import sampleMeasurement, updateCell
 from TBBF.gaussians import gaussian1D as g1d
 from TBBF.plotting import plotter
 
@@ -45,7 +45,7 @@ with plt.ion():
         meas = np.random.rand(n)
 
         #update estMap
-        estMap[x] = updateMapping(z, schedule[x], t0, estMap[x])
+        estMap[x] = updateCell(z, schedule[x], t0, estMap[x])
 
         #plot
         t += 1

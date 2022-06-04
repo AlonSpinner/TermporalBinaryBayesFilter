@@ -87,7 +87,7 @@ def inverseSensorScheduleModel(z : str, s : g1d, t : float, m = "⬛") -> float:
     denum = forwardSensorScheduleModel(z, s, t)
     return num/denum
 
-def updateMapping(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
+def updateCell(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
     '''
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
@@ -103,11 +103,12 @@ def updateMapping(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
     odds =  (pz/(1-pz+EPS)) * pkm1/(1-pkm1+EPS) * ((1-ps)/(ps+EPS))
     return odds2p(odds)
 
-# def updateMapping(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
-#     ps = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t), gama)
-#     pz =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorScheduleModel(z, s, t) , gama)
-#     odds = (pz/(1-pz+EPS)) * (1+ps)/(1-ps+EPS)
-#     return odds2p(odds)
+def updateCellDynamicWorld(z : str, s : g1d, t : float, gama = 1) -> float:
+    ps = scheduleModel(s, t)
+    psg = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t), gama)
+    pzg =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorScheduleModel(z, s, t) , gama)
+    odds = (pzg/(1-pzg+EPS)) * ((1-psg)/(psg+EPS)) *  (1+ps)/(1-ps+EPS)
+    return odds2p(odds)
 
 def binaryStateMeasurementModelEnhancer_Explicit(pz : float, gama : Union[float,np.ndarray])-> Union[float,np.ndarray]:
     '''
