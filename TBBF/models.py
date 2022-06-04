@@ -92,7 +92,7 @@ def updateCell(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
     t - world time
-    pkm1 - probability of cell being occupied before measuring
+    pkm1 - posterior probability of cell being occupied in last step
     gama - probability of measuring cell ~ probability of being infront of cell
     
     returns updated probablity of cell being occupied
@@ -103,11 +103,22 @@ def updateCell(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
     odds =  (pzg/(1-pzg+EPS)) * pkm1/(1-pkm1+EPS) * ((1-psg)/(psg+EPS))
     return odds2p(odds)
 
-def updateCellDynamicWorld(z : str, s : g1d, t : float, gama = 1) -> float:
-    ps = scheduleModel(s, t)
+def updateCellDynamicWorld(z : str, s : g1d, t : float, pkm1 : float, gama = 1) -> float:
+    '''
+    z - meaurement "⬜" or "⬛"
+    s - schedule of cell
+    t - world time
+    pkm1 - posterior probability of cell being occupied in last step
+    gama - probability of measuring cell ~ probability of being infront of cell
+    
+    returns updated probablity of cell being occupied
+    '''
+
+    ps = scheduleModel(s, t, "⬛") * pkm1 +  scheduleModel(s, t, "⬛") * (1-pkm1)
     psg = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t), gama)
     pzg =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorScheduleModel(z, s, t) , gama)
-    odds = (pzg/(1-pzg+EPS)) * ((1-psg)/(psg+EPS)) *  (1+ps)/(1-ps+EPS)
+
+    odds = (pzg/(1-pzg+EPS)) * ((1-psg)/(psg+EPS)) * ps/(1-ps+EPS)
     return odds2p(odds)
 
 def binaryStateMeasurementModelEnhancer_Explicit(pz : float, gama : Union[float,np.ndarray])-> Union[float,np.ndarray]:
@@ -116,7 +127,6 @@ def binaryStateMeasurementModelEnhancer_Explicit(pz : float, gama : Union[float,
     gama - probability of measuring the correct thing [0,1]
     
     assumption: z measures a binary state
-    see test 09
     '''
     return (0.5**(1-gama) * pz**gama) * (2**(1-gama) / (pz**gama + (1-pz)**gama))
 
@@ -124,8 +134,6 @@ def binaryStateMeasurementModelEnhancer_Implicit(measurementModel : Callable)-> 
     '''
     measurementModel - measurement model of a binary state
     gama - probability of measuring the correct thing [0,1]
-    
-    see test 09
     '''
     def enhancedModel(z, m, gama):
         pz = measurementModel(z, m)

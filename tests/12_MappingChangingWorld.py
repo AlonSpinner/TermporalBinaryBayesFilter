@@ -44,7 +44,7 @@ with plt.ion():
 
         #update estMap
         for c in range(n):
-            estMap[c] = updateCellDynamicWorld(z, schedule[c], t, gama = c == x)
+            estMap[c] = updateCellDynamicWorld(z, schedule[c], t, estMap[c], gama = c == x)
 
         #plot
         t += 1

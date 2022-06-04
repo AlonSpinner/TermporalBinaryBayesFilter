@@ -4,7 +4,7 @@ from TBBF.models import sampleMeasurement, forwardSensorScheduleModel, motionMod
 from TBBF.gaussians import gaussian1D as g1d
 from TBBF.plotting import plotter
 
-np.random.seed(4) #seed 4 and seed 2 are interesting
+np.random.seed(2)
 
 schedule = [g1d(3,0.5),
             g1d(8,2),
