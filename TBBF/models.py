@@ -92,7 +92,7 @@ def updateMapping(z : str, s : g1d, t : float, pkm1: float, pr :float = 1):
     s - schedule of cell
     t - world time
     pkm1 - probability of cell being occupied before measuring
-    pr - probability of robot being in cell
+    pr - probability of measuring cell ~ probability of being infront of cell
     
     returns updated probablity of cell being occupied
     '''
