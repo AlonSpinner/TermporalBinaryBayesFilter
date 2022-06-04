@@ -58,7 +58,7 @@ with plt.ion():
         for ci in range(n):
                 pm = 0
                 for cj in range(n):
-                    pm += motionModel(cj,ci,a) * estRobot[cj]
+                    pm += motionModel(cj,ci,a, a_sigma = 0.4) * estRobot[cj]
                 estRobotNew[ci] = forwardSensorScheduleModel(z,schedule[ci],t0) * pm
         estRobot = estRobotNew/sum(estRobotNew)
 

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TBBF.models import sampleMeasurement, updateMappingDynamicWorld
+from TBBF.models import sampleMeasurement, updateCellDynamicWorld
 from TBBF.gaussians import gaussian1D as g1d
 from TBBF.plotting import plotter
 
@@ -44,7 +44,7 @@ with plt.ion():
 
         #update estMap
         for c in range(n):
-            estMap[c] = updateMappingDynamicWorld(z, schedule[c], t, c == x)
+            estMap[c] = updateCellDynamicWorld(z, schedule[c], t, gama = c == x)
 
         #plot
         t += 1
