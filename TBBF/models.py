@@ -113,7 +113,7 @@ def binaryStateMeasurementModelEnhancer_Explicit(pz : float, gama : Union[float,
     '''
     return (0.5**(1-gama) * pz**gama) * (2**(1-gama) / (pz**gama + (1-pz)**gama))
 
-def binaryStateMeasurementModelEnhancer_Implicit(measurementModel : Callable, gama : Union[float,np.ndarray])-> Union[float,np.ndarray]:
+def binaryStateMeasurementModelEnhancer_Implicit(measurementModel : Callable)-> Callable:
     '''
     measurementModel - measurement model of a binary state
     gama - probability of measuring the correct thing [0,1]
