@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TBBF.probalistic_models import sampleMeasurement, updateCell
+from TBBF.probalistic_models import sampleMeasurement, updateCell_forward
 from TBBF.random_models import gaussian1D as g1d
 from TBBF.plotting import plotter
 
@@ -22,7 +22,11 @@ bool2str = lambda c: "⬛" if c else "⬜"
 t0 = 4
 frozenWorld = get_world(t0)
 frozenSchedule = get_schedule(t0)
-actions = [-1,-1,0,+1,+1,0,+1,+1,+1,+1,-1,-1]
+
+moves = [-1,-1,+1,+1,+1,+1,+1,+1,-1,-1]
+actions = [0] * len(moves)*2
+actions[::2] = moves
+
 L = len(actions) #number of actions
 tf = t0 + L
 n = len(schedule) #number of cells
@@ -42,11 +46,10 @@ with plt.ion():
         #move robot
         x += a
 
-        for i in range(3):
-            #sample measurement
-            z = sampleMeasurement(bool2str(frozenWorld[x]))
-            #update estMap
-            estMap[x] = updateCell(z, schedule[x], t0, estMap[x])
+        #sample measurement
+        z = sampleMeasurement(bool2str(frozenWorld[x]))
+        #update estMap
+        estMap[x] = updateCell_forward(z, schedule[x], t0, estMap[x])
 
         #plot
         pltr.update(t, z = z, estMap = estMap, world = frozenWorld, robot = x, schedule = frozenSchedule)

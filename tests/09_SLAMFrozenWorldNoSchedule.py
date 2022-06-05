@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TBBF.probalistic_models import sampleMeasurement, updateCell, forwardSensorScheduleModel, motionModel
+from TBBF.probalistic_models import sampleMeasurement, updateCell_forward, updateCell_inverse, \
+     forwardSensorEstCell, motionModel
 from TBBF.random_models import gaussian1D as g1d
 from TBBF.plotting import plotter
 
@@ -22,7 +23,9 @@ bool2str = lambda c: "⬛" if c else "⬜"
 t0 = 4
 frozenWorld = get_world(t0)
 frozenSchedule = get_schedule(t0)
-actions = [-1,-1,0,+1,+1,0,+1,+1,+1,-1,-1,-1,-1,-1,1,1,1,1]
+moves = [-1,-1,+1,+1,+1,+1,+1,-1,-1,-1,-1,-1,1,1,1,1]
+actions = [0] * len(moves)*2
+actions[::2] = moves
 L = len(actions) #number of actions
 tf = t0 + L
 n = len(schedule) #number of cells
@@ -52,13 +55,13 @@ with plt.ion():
         for ci in range(n):
                 pm = 0
                 for cj in range(n):
-                    pm += motionModel(cj,ci,a) * estRobot[cj]
-                estRobotNew[ci] = forwardSensorScheduleModel(z,schedule[ci],t0) * pm
+                    pm += motionModel(cj,ci,a, a_sigma = 0.4) * estRobot[cj]
+                estRobotNew[ci] = forwardSensorEstCell(z,estMap[ci]) * pm
         estRobot = estRobotNew/sum(estRobotNew)
 
         #update estMap
         for xhat in range(n):
-            estMap[xhat] = updateCell(z, schedule[xhat], t0, estMap[xhat], estRobot[xhat]) #estRobot[xhat]
+            estMap[xhat] = updateCell_forward(z, schedule[xhat], t0, estMap[xhat], estRobot[xhat]) #estRobot[xhat]
 
         #plot
         pltr.update(t, z = z, estRobot = estRobot, estMap = estMap, world = frozenWorld, robot = x, schedule = frozenSchedule)

@@ -6,13 +6,38 @@ EPS = 1e-15
 def motionModel(source,dest,a_mu,a_sigma = 0.2):
     g = g1d(source + a_mu,a_sigma)
     return  g.pdf(dest)
+
+def inverseSensorModel(m : str, z : str) -> float:
+    '''
+    NOT RELATED TO FORWARD SENSOR MODEL. 
+    IN PROBLEM YOU CAN USE EITHER ONE, NOT BOTH.
+    IF ONE IS MODELED, THE OTHER IS DERIVED
+
+    z - meaurement "⬜" or "⬛"
+    m - cell state "⬜" or "⬛"
+    
+    returns probablity of achieving measurement z
+    '''
+    if z == "⬛":
+        if m == "⬜":
+            return 0.1
+        elif m == "⬛":
+            return 0.9
+
+    elif z == "⬜":
+        if m == "⬜":
+            return 0.85
+        elif m == "⬛":
+            return 0.15
     
 def forwardSensorModel(z : str, m : str) -> float:
     '''
+    NOT RELATED TO FORWARD SENSOR MODEL. 
+    IN PROBLEM YOU CAN USE EITHER ONE, NOT BOTH.
+    IF ONE IS MODELED, THE OTHER IS DERIVED
+
     z - meaurement "⬜" or "⬛"
-    S - schedule of building
-    x - location of cell
-    t - world time
+    m - cell state "⬜" or "⬛"
     
     returns probablity of achieving measurement z
     '''
@@ -45,6 +70,8 @@ def scheduleModel(s : g1d, t : float , m : str = "⬛") -> float:
 
 def sampleMeasurement(m : str) -> str:
     '''
+    ASUMING FORWARD SENSOR MODEL IS MODELD
+
     m:  "⬜" or "⬛"
     
     returns measurement z
@@ -66,6 +93,8 @@ def sampleMeasurement(m : str) -> str:
 
 def forwardSensorScheduleModel(z : str, s : g1d, t):
     '''
+    ASUMING FORWARD SENSOR MODEL IS MODELD
+
     s - schedule of cell
     t - world time
     z - measurement
@@ -77,6 +106,8 @@ def forwardSensorScheduleModel(z : str, s : g1d, t):
 
 def inverseSensorScheduleModel(z : str, s : g1d, t : float, m = "⬛") -> float:
     '''
+    ASUMING FORWARD SENSOR MODEL IS MODELD
+
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
     t - world time
@@ -87,7 +118,21 @@ def inverseSensorScheduleModel(z : str, s : g1d, t : float, m = "⬛") -> float:
     denum = forwardSensorScheduleModel(z, s, t)
     return num/denum
 
-def updateCell(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
+def forwardSensorEstCell(z : str, p_occ : float) -> float:
+    '''
+    ASUMING FORWARD SENSOR MODEL IS MODELD
+
+    z - meaurement "⬜" or "⬛"
+    p_occ - probability of cell being of occupied
+
+    returns probability of measurement occuring
+
+    marginalize in:
+    p(z|m) = int(p(z,m'|m)) = int(p(z|m')*p(m'|m)) 
+    '''
+    return forwardSensorModel(z, m = "⬜") * (1-p_occ) + forwardSensorModel(z, m = "⬛") * p_occ
+
+def updateCell_forward(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
     '''
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
@@ -97,13 +142,29 @@ def updateCell(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
     
     returns updated probablity of cell being occupied
     '''
-    #USES inverseSensorScheduleModel (my choice)
-    psg = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t), gama)
     pzg =  binaryStateMeasurementModelEnhancer_Explicit(forwardSensorModel(z,"⬛"),gama)
-    odds =  (pzg/(1-pzg+EPS)) * pkm1/(1-pkm1+EPS)# * ((1-psg)/(psg+EPS))
+    odds =  (pzg/(1-pzg+EPS)) * pkm1/(1-pkm1+EPS)
+    return odds2p(odds)
+
+def updateCell_inverse(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
+    '''
+    ASSUMING INVERSE SENSOR MODEL IS MODELD
+
+    z - meaurement "⬜" or "⬛"
+    s - schedule of cell
+    t - world time
+    pkm1 - posterior probability of cell being occupied in last step
+    gama - probability of measuring cell ~ probability of being infront of cell
+    
+    returns updated probablity of cell being occupied
+    '''
+    psg = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t), gama)
+    pzg =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorModel("⬛", z),gama)
+    odds =  (pzg/(1-pzg+EPS)) * pkm1/(1-pkm1+EPS) * ((1-psg)/(psg+EPS))
     return odds2p(odds)
 
 def updateCellDynamicWorld(z : str, s : g1d, t : float, pkm1 : float, gama = 1) -> float:
+    #need to understand how to handle this...
     '''
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
