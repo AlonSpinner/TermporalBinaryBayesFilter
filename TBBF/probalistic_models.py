@@ -18,15 +18,15 @@ def forwardSensorModel(z : str, m : str) -> float:
     '''
     if m == "⬛":
         if z == "⬜":
-            return 0.0
+            return 0.1
         elif z == "⬛":
-            return 1.0
+            return 0.9
 
     elif m == "⬜":
         if z == "⬜":
-            return 1.0
+            return 0.85
         elif z == "⬛":
-            return 0.0
+            return 0.15
 
 def scheduleModel(s : g1d, t : float , m : str = "⬛") -> float:
     '''

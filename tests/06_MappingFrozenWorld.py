@@ -42,12 +42,11 @@ with plt.ion():
         #move robot
         x += a
 
-        #sample measurement
-        z = sampleMeasurement(bool2str(frozenWorld[x]))
-        meas = np.random.rand(n)
-
-        #update estMap
-        estMap[x] = updateCell(z, schedule[x], t0, estMap[x])
+        for i in range(3):
+            #sample measurement
+            z = sampleMeasurement(bool2str(frozenWorld[x]))
+            #update estMap
+            estMap[x] = updateCell(z, schedule[x], t0, estMap[x])
 
         #plot
         pltr.update(t, z = z, estMap = estMap, world = frozenWorld, robot = x, schedule = frozenSchedule)

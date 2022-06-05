@@ -44,7 +44,6 @@ with plt.ion():
 
         #sample measurement
         z = sampleMeasurement(bool2str(frozenWorld[x]))
-        meas = np.random.rand(n)
 
         #update estMap
         estMap[x] = updateCell(z, schedule[x], t0, estMap[x])
