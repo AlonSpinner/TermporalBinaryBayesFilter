@@ -18,7 +18,7 @@ class gaussian1D:
     def cdf(self,x : float): #cumulative distibution function
         # https://en.wikipedia.org/wiki/Normal_distribution
         #returns integral from [-inf,x]
-        zeta = x-self.mu/(self.sigma)
+        zeta = (x-self.mu)/(self.sigma)
         return npPhi(zeta)
 
     def plot(self) -> None:

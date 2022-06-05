@@ -20,8 +20,6 @@ for g in schedule:
     cdf.append(g.cdf(t))
     pdf.append(g.pdf(t))
 
-# dydt = np.gradient(y)/dt
-
 fig, axes = plt.subplots(2,1)
 
 for c,p in zip(cdf,pdf):
@@ -29,8 +27,8 @@ for c,p in zip(cdf,pdf):
     axes[1].plot(t,p)
 for w in world:
     axes[1].scatter(w,0.5)
-axes[0].set_title('y(t)')
-axes[1].set_title('dydt(t)')  
+axes[0].set_title('cdf')
+axes[1].set_title('pdf')  
 plt.show()
 
 
