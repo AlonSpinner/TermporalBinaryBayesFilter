@@ -148,7 +148,7 @@ def updateCell_forward(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> fl
 
 def updateCell_inverse(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
     '''
-    ASSUMING INVERSE SENSOR MODEL IS MODELD
+    ASSUMING FORWARD SENSOR MODEL IS MODELD
 
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
@@ -159,7 +159,7 @@ def updateCell_inverse(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> fl
     returns updated probablity of cell being occupied
     '''
     psg = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t), gama)
-    pzg =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorModel("⬛", z),gama)
+    pzg =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorScheduleModel(z,s,t),gama)
     odds =  (pzg/(1-pzg+EPS)) * pkm1/(1-pkm1+EPS) * ((1-psg)/(psg+EPS))
     return odds2p(odds)
 

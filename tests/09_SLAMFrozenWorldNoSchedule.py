@@ -61,7 +61,7 @@ with plt.ion():
 
         #update estMap
         for xhat in range(n):
-            estMap[xhat] = updateCell_forward(z, schedule[xhat], t0, estMap[xhat], estRobot[xhat]) #estRobot[xhat]
+            estMap[xhat] = updateCell_inverse(z, schedule[xhat], t0, estMap[xhat], estRobot[xhat]) #estRobot[xhat]
 
         #plot
         pltr.update(t, z = z, estRobot = estRobot, estMap = estMap, world = frozenWorld, robot = x, schedule = frozenSchedule)

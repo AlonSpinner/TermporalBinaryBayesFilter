@@ -71,7 +71,7 @@ with plt.ion():
 
         #update estMap
         for c in range(n):
-            estMap[c] = updateCell_forward(z, schedule[c], t0, estMap[c], estRobot[c])
+            estMap[c] = updateCell_inverse(z, schedule[c], t0, estMap[c], estRobot[c])
 
         #plot
         pltr.update(t, z = z, estRobot = estRobot, estMap = estMap, world = frozenWorld, robot = x, schedule = frozenSchedule)
