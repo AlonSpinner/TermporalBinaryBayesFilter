@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TBBF.models import sampleMeasurement, updateCell, forwardSensorScheduleModel, motionModel
-from TBBF.gaussians import gaussian1D as g1d
+from TBBF.probalistic_models import sampleMeasurement, updateCell, forwardSensorScheduleModel, motionModel
+from TBBF.random_models import gaussian1D as g1d
 from TBBF.plotting import plotter
 
 np.random.seed(2)

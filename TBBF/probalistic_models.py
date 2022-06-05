@@ -1,4 +1,4 @@
-from .gaussians import gaussian1D as g1d
+from TBBF.random_models import gaussian1D as g1d
 import numpy as np
 from typing import Union,Callable
 EPS = 1e-15
@@ -18,15 +18,15 @@ def forwardSensorModel(z : str, m : str) -> float:
     '''
     if m == "⬛":
         if z == "⬜":
-            return 0.05
+            return 0.0
         elif z == "⬛":
-            return 0.95
+            return 1.0
 
     elif m == "⬜":
         if z == "⬜":
-            return 0.95
+            return 1.0
         elif z == "⬛":
-            return 0.05
+            return 0.0
 
 def scheduleModel(s : g1d, t : float , m : str = "⬛") -> float:
     '''
@@ -99,8 +99,8 @@ def updateCell(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
     '''
     #USES inverseSensorScheduleModel (my choice)
     psg = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t), gama)
-    pzg =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorScheduleModel(z, s, t) , gama)
-    odds =  (pzg/(1-pzg+EPS)) * pkm1/(1-pkm1+EPS) * ((1-psg)/(psg+EPS))
+    pzg =  binaryStateMeasurementModelEnhancer_Explicit(forwardSensorModel(z,"⬛"),gama)
+    odds =  (pzg/(1-pzg+EPS)) * pkm1/(1-pkm1+EPS)# * ((1-psg)/(psg+EPS))
     return odds2p(odds)
 
 def updateCellDynamicWorld(z : str, s : g1d, t : float, pkm1 : float, gama = 1) -> float:

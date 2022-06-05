@@ -1,5 +1,5 @@
 import numpy as np
-from TBBF.gaussians import gaussian1D as g1d
+from TBBF.random_models import gaussian1D as g1d
 import matplotlib.pyplot as plt
 
 np.random.seed(1)

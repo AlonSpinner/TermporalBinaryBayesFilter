@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TBBF.gaussians import gaussian1D as g1d
+from TBBF.random_models import gaussian1D as g1d
 from TBBF.plotting import plotter
 
 schedule = [g1d(3,0.5),

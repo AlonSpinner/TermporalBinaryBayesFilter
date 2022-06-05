@@ -1,4 +1,4 @@
-from TBBF.models import forwardSensorModel, binaryStateMeasurementModelEnhancer_Implicit
+from TBBF.probalistic_models import forwardSensorModel, binaryStateMeasurementModelEnhancer_Implicit
 import numpy as np
 import matplotlib.pyplot as plt
 
