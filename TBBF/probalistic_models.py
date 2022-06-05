@@ -6,36 +6,12 @@ EPS = 1e-15
 def motionModel(source,dest,a_mu,a_sigma = 0.2):
     g = g1d(source + a_mu,a_sigma)
     return  g.pdf(dest)
-
-def inverseSensorModel(m : str, z : str) -> float:
-    '''
-    NOT RELATED TO FORWARD SENSOR MODEL. 
-    IN PROBLEM YOU CAN USE EITHER ONE, NOT BOTH.
-    IF ONE IS MODELED, THE OTHER IS DERIVED
-
-    z - meaurement "⬜" or "⬛"
-    m - cell state "⬜" or "⬛"
-    
-    returns probablity of achieving measurement z
-    '''
-    if z == "⬛":
-        if m == "⬜":
-            return 0.1
-        elif m == "⬛":
-            return 0.9
-
-    elif z == "⬜":
-        if m == "⬜":
-            return 0.85
-        elif m == "⬛":
-            return 0.15
     
 def forwardSensorModel(z : str, m : str) -> float:
+    # NOT RELATED TO FORWARD SENSOR MODEL. 
+    # IN PROBLEM YOU CAN USE EITHER ONE, NOT BOTH.
+    # IF ONE IS MODELED, THE OTHER IS DERIVED
     '''
-    NOT RELATED TO FORWARD SENSOR MODEL. 
-    IN PROBLEM YOU CAN USE EITHER ONE, NOT BOTH.
-    IF ONE IS MODELED, THE OTHER IS DERIVED
-
     z - meaurement "⬜" or "⬛"
     m - cell state "⬜" or "⬛"
     
@@ -55,7 +31,7 @@ def forwardSensorModel(z : str, m : str) -> float:
 
 def scheduleModel(s : g1d, t : float , m : str = "⬛") -> float:
     '''
-    S - schedule of cell
+    s - schedule of cell
     t - world time
     
     returns probablity of m given schedule
@@ -69,9 +45,8 @@ def scheduleModel(s : g1d, t : float , m : str = "⬛") -> float:
 
 
 def sampleMeasurement(m : str) -> str:
+    #ASUMING FORWARD SENSOR MODEL IS MODELD
     '''
-    ASUMING FORWARD SENSOR MODEL IS MODELD
-
     m:  "⬜" or "⬛"
     
     returns measurement z
@@ -92,9 +67,8 @@ def sampleMeasurement(m : str) -> str:
             return "⬛"
 
 def forwardSensorScheduleModel(z : str, s : g1d, t):
+    #ASUMING FORWARD SENSOR MODEL IS MODELD
     '''
-    ASUMING FORWARD SENSOR MODEL IS MODELD
-
     s - schedule of cell
     t - world time
     z - measurement
@@ -105,9 +79,8 @@ def forwardSensorScheduleModel(z : str, s : g1d, t):
                 forwardSensorModel(z, m = "⬛") * scheduleModel(s, t , m = "⬛")
 
 def inverseSensorScheduleModel(z : str, s : g1d, t : float, m = "⬛") -> float:
+    #ASUMING FORWARD SENSOR MODEL IS MODELD
     '''
-    ASUMING FORWARD SENSOR MODEL IS MODELD
-
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
     t - world time
@@ -119,9 +92,8 @@ def inverseSensorScheduleModel(z : str, s : g1d, t : float, m = "⬛") -> float:
     return num/denum
 
 def forwardSensorEstCell(z : str, p_occ : float) -> float:
+    #ASUMING FORWARD SENSOR MODEL IS MODELD
     '''
-    ASUMING FORWARD SENSOR MODEL IS MODELD
-
     z - meaurement "⬜" or "⬛"
     p_occ - probability of cell being of occupied
 
@@ -133,6 +105,7 @@ def forwardSensorEstCell(z : str, p_occ : float) -> float:
     return forwardSensorModel(z, m = "⬜") * (1-p_occ) + forwardSensorModel(z, m = "⬛") * p_occ
 
 def updateCell_forward(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
+    #ASUMING FORWARD SENSOR MODEL IS MODELD
     '''
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
@@ -147,9 +120,8 @@ def updateCell_forward(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> fl
     return odds2p(odds)
 
 def updateCell_inverse(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> float:
+    #ASSUMING FORWARD SENSOR MODEL IS MODELD
     '''
-    ASSUMING FORWARD SENSOR MODEL IS MODELD
-
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
     t - world time
@@ -157,14 +129,19 @@ def updateCell_inverse(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> fl
     gama - probability of measuring cell ~ probability of being infront of cell
     
     returns updated probablity of cell being occupied
+
+    important note:
+    pzg uses inverseSensorScheduleModel and not some inverseSensorModel that would have 
+    been capped at 0.9 or some other value. inverseSensorScheduleModel allows for higher values ensuring correct mapping
     '''
-    psg = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t), gama)
-    pzg =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorScheduleModel(z,s,t),gama)
+    psg = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t,"⬛"), gama)
+    pzg =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorScheduleModel(z,s,t,"⬛"),gama)
     odds =  (pzg/(1-pzg+EPS)) * pkm1/(1-pkm1+EPS) * ((1-psg)/(psg+EPS))
     return odds2p(odds)
 
 def updateCellDynamicWorld(z : str, s : g1d, t : float, pkm1 : float, gama = 1) -> float:
     #need to understand how to handle this...
+    #USES forwardSensorScheduleModel (my choice)
     '''
     z - meaurement "⬜" or "⬛"
     s - schedule of cell
@@ -174,7 +151,6 @@ def updateCellDynamicWorld(z : str, s : g1d, t : float, pkm1 : float, gama = 1) 
     
     returns updated probablity of cell being occupied
     '''
-    #USES forwardSensorScheduleModel (my choice)
     ps = scheduleModel(s, t, "⬛") * pkm1 +  scheduleModel(s, t, "⬛") * (1-pkm1)
     pzg = binaryStateMeasurementModelEnhancer_Explicit(forwardSensorModel(z,"⬛"),gama)
     odds = (pzg/(1-pzg+EPS)) * ps/(1-ps+EPS) #*((1-psg)/(psg+EPS))

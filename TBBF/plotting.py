@@ -41,7 +41,8 @@ class plotter:
 
         L = tf - t0 + 1
         ticks = list(range(0,2*L,2))
-        labels = [f"t = {l+t0}      " for l in range(L)]
+        spaces = 5
+        labels = [f"t = {l+t0}" + " "*(spaces + 2*(l+t0 < 10)) for l in range(L)]
         axes[0,axE.Meas].set_yticks(ticks,labels)
 
         self.axes : list[list[plt.Axes]]= axes

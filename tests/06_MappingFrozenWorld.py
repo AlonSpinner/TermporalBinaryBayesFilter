@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TBBF.probalistic_models import sampleMeasurement, updateCell_forward
+from TBBF.probalistic_models import sampleMeasurement, updateCell_forward, updateCell_inverse
 from TBBF.random_models import gaussian1D as g1d
 from TBBF.plotting import plotter
 
@@ -49,7 +49,7 @@ with plt.ion():
         #sample measurement
         z = sampleMeasurement(bool2str(frozenWorld[x]))
         #update estMap
-        estMap[x] = updateCell_forward(z, schedule[x], t0, estMap[x])
+        estMap[x] = updateCell_inverse(z, schedule[x], t0, estMap[x])
 
         #plot
         pltr.update(t, z = z, estMap = estMap, world = frozenWorld, robot = x, schedule = frozenSchedule)
