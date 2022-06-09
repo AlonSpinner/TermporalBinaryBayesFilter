@@ -20,7 +20,10 @@ get_schedule = lambda t: np.array([g.cdf(t) for g in schedule])
 bool2str = lambda c: "⬛" if c else "⬜"
 
 t0 = 4
-actions = [-1,-1,0,+1,+1,0,+1,+1,+1,+1,-1,-1]
+moves = [-1,-1,+1,+1,+1,+1,+1,-1,-1,-1,-1,-1,1,1,1,1]
+# actions = [0] * len(moves)*2
+# actions[::2] = moves
+actions = moves
 L = len(actions) #number of actions
 tf = t0 + L
 n = len(schedule) #number of cells

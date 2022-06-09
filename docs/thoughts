@@ -24,3 +24,6 @@ Changing World - Changing Schedule - Binary Sensor
 		* we want to plan the schedule such that it will allow the robot to make verifications		
 		* we may want to change the schedule if things were built in a less than optimized order
 
+	Important: Unlike with the Frozen World assumption where the estimated map is updated only in accordance to the robot's location
+			In the Changing World assumption we would like to update the estimated map in places where the robot has 0 probability of 				measuring, via the schedule.
+
