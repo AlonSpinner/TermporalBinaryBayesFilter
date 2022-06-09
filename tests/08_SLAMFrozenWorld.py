@@ -2,17 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from TBBF.probalistic_models import sampleMeasurement, updateCell_forward, updateCell_inverse, \
      forwardSensorEstCell, motionModel
-from TBBF.random_models import gaussian1D as g1d
+from TBBF.random_models import gaussian1D as g1d, dead1D
 from TBBF.plotting import plotter
 
 np.random.seed(6)
 
 schedule = [g1d(1,1),
             g1d(10,20),
-            g1d(1e10,1), #build far far in the future
+            dead1D(), #build far far in the future
             g1d(5,0.5),
             g1d(10,5),
-            g1d(1e10,1), #build far far in the future
+            dead1D(), #build far far in the future
             g1d(7,0.2)]
 
 # history = np.array([g.sample() for g in schedule]) #when things were built
@@ -32,9 +32,9 @@ t0 = 4
 frozenWorld = get_world(t0)
 frozenSchedule = get_schedule(t0)
 moves = [-1,-1,+1,+1,+1,+1,+1,-1,-1,-1,-1,-1,1,1,1,1]
-actions = [0] * len(moves)*2
-actions[::2] = moves
-# actions = moves
+# actions = [0] * len(moves)*2
+# actions[::2] = moves
+actions = moves
 
 L = len(actions) #number of actions
 tf = t0 + L

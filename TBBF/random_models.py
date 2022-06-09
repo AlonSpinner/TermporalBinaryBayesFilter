@@ -131,6 +131,25 @@ class uniform1D:
         axes[1].set_title('pdf(t)')
         return fig,axes
 
+class dead1D:
+    def __init__(self, status : str = 'free') -> None:
+        self.status = status
+
+    def pdf(self,x : float):
+        return np.zeros_like(x)
+
+    def sample(self, n : int = 1): #sample time of construction
+        if self.status == 'free':
+            return np.ones(n) * 1e10 
+        elif self.status == 'occ':
+            return np.ones(n) * -1e10 
+
+    def cdf(self,x : float):
+        if self.status == 'free':
+            return np.zeros_like(x)
+        elif self.status == 'occ':
+            return np.ones_like(x)
+
 def nperf(x):
     if np.isscalar(x):
         return erf(x)

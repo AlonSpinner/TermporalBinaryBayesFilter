@@ -15,7 +15,7 @@ from TBBF.random_models import gaussian1D, gaussian1DT, uniform1D
 # fig.suptitle('gaussian1DT - symmetric', fontsize=16)
 # plt.show()
 
-g = gaussian1DT(4,3,0,10)
+g = gaussian1DT(10,10,0,30)
 fig, axes = g.plot()
 x = g.sample(10000)
 axes[1].hist(x, bins = 30, density = True)

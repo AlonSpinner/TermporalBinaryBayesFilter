@@ -1,14 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TBBF.random_models import gaussian1D as g1d
+from TBBF.random_models import gaussian1D as g1d, dead1D
 from TBBF.plotting import plotter
 
 schedule = [g1d(3,0.5),
             g1d(4,1),
-            g1d(1e10,1), #build far far in the future
+            dead1D(), #build far far in the future
             g1d(5,0.5),
             g1d(6,1),
-            g1d(1e10,1), #build far far in the future
+            dead1D(), #build far far in the future
             g1d(7,0.2)]
 history = np.array([g.sample() for g in schedule]) #when things were built
 

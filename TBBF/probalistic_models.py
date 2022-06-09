@@ -3,7 +3,7 @@ import numpy as np
 from typing import Union,Callable
 EPS = 1e-15
 
-def motionModel(source,dest,a_mu,a_sigma = 0.2):
+def motionModel(source,dest,a_mu,a_sigma = 0.4):
     g = g1d(source + a_mu,a_sigma)
     return  g.pdf(dest)
     
@@ -136,7 +136,7 @@ def updateCell_inverse(z : str, s : g1d, t : float, pkm1: float, gama = 1) -> fl
     '''
     psg = binaryStateMeasurementModelEnhancer_Explicit(scheduleModel(s, t,"⬛"), gama)
     pzg =  binaryStateMeasurementModelEnhancer_Explicit(inverseSensorScheduleModel(z,s,t,"⬛"),gama)
-    odds =  (pzg/(1-pzg+EPS)) * pkm1/(1-pkm1+EPS) * ((1-psg)/(psg+EPS))
+    odds =  (pzg/(1-pzg+EPS)) * (pkm1/(1-pkm1+EPS)) * ((1-psg)/(psg+EPS))
     return odds2p(odds)
 
 def updateCellDynamicWorld(z : str, s : g1d, t : float, pkm1 : float, gama = 1) -> float:

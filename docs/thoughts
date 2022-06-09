@@ -1,12 +1,26 @@
-Frozen World - Frozen Schedule - Binary Sensor:
-	1) Setting: 
-		*workers gone home
+Generally speaking:
+	1) schedule holds probabilties p(m = occ | s,t)
+	2) from posterior p(m|z,s,t) we may decide that a cell is occupied ~ 'finished task'
+	3) to achieve 'multi-stage' we can 'clear' an occupied cell
+
+
+Scenario1: Frozen World - Frozen Schedule - Binary Sensor:
+	Setting: 
+		*workers gone home for the day
 		*we need to understand what was built during the day
 		*we have a binary sensor that measures 'finished'/'not finished' status of a task in a cell
-	2) schedule holds probabilties p(m = occ | s,t)
-	3) we are not expected to correct/override the schedule: 
-		there is no "lessening" the probability of a cell being occupied beoynd schedule
-	4) from posterior p(m|z,s,t) we may decide that a cell is occupied ~ 'finished task'
-	5) to achieve 'multi-stage' we can 'clear' an occupied cell
 
 Frozen World - Changing Schedule - Binary Sensor
+	Setting:
+		* workers gone home
+		* prehaps we can modify the schedule to fit reality...
+		* this is a crapy setting
+
+Changing World - Changing Schedule - Binary Sensor
+	Setting:
+		* workers are in the building
+		* the robot does reconnaissance in the building --- LIFELONG SLAM
+		* we have a binary sensor that measures 'finished'/'not finished' status of a task in a cell
+		* we want to plan the schedule such that it will allow the robot to make verifications		
+		* we may want to change the schedule if things were built in a less than optimized order
+
